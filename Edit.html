@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Bill Pending</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4c3;
+      padding: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    th {
+      background-color: #558b2f;
+      color: white;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #558b2f;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+  <script>
+    function outwardEntry() {
+      window.location.href = 'Outward1.html';
+    }
+    function inwardEntry() {
+      window.location.href = 'Inward1.html';
+    }
+    function advanceEntry() {
+      window.location.href = 'Advanced.html';
+    }
+    var data = []; // Store fetched data
+    var selectedRowData = null; // Store data of the selected row
+//version 51.0
+    function fetchBillPendingData() {
+      const scriptURL = 'https://script.google.com/macros/s/AKfycbxEiOeaYSWYGarTv9mfXpaGl-DuE-U_YQAyl8NND8pVVVhDPH0NiPiQ5NR_66ML4pTd/exec';
+      const callbackName = 'processData';
+
+      const script = document.createElement('script');
+      script.src = `${scriptURL}?page=fetchBillPendingData&callback=${callbackName}`;
+      document.body.appendChild(script);
+    }
+
+    function processData(fetchedData) {
+      data = fetchedData; // Store fetched data
+      populateTable(fetchedData);
+    }
+
+    function populateTable(data) {
+      var table = document.getElementById('dataTable');
+      table.innerHTML = '';
+
+      var headerRow = document.createElement('tr');
+      var headers = ['Select', 'Unique ID', 'Dispatch Date', 'Name Of Party', 'ARS', 'Grade', 'Outward Quantity', 'Vehicle Number', 'Invoice Date', 'Invoice Number', 'T/W', 'Bill Pending'];
+      headers.forEach(function(header) {
+        var th = document.createElement('th');
+        th.appendChild(document.createTextNode(header));
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+
+      data.forEach(function(row, index) {
+        var tr = document.createElement('tr');
+
+        // Add radio button for selection
+        var radioTd = document.createElement('td');
+        var radioInput = document.createElement('input');
+        radioInput.type = 'radio';
+        radioInput.name = 'selectedRow';
+        radioInput.value = index; // Store the row index
+        radioInput.addEventListener('change', function() {
+          selectedRowData = { ...row, index }; // Store data of the selected row
+          document.getElementById('proceedButton').disabled = false;
+          enableInputFields(tr);
+        });
+        radioTd.appendChild(radioInput);
+        tr.appendChild(radioTd);
+
+        // Add data cells
+        Object.keys(row).forEach(function(key) {
+          var td = document.createElement('td');
+          var cellValue = row[key];
+          if (key === 'dispatchDate' && cellValue) {
+            td.appendChild(document.createTextNode(cellValue.substring(0, 10)));
+          } else if (key === 'invoiceDate') {
+            var input = document.createElement('input');
+            input.type = 'date';
+            input.value = cellValue || '';
+            input.disabled = true; // Disable input initially
+            input.addEventListener('input', function() {
+              selectedRowData[key] = this.value; // Update the selectedRowData object with the new value
+            });
+            td.appendChild(input);
+          } else if (key === 'invoiceNumber') {
+            var input = document.createElement('input');
+            input.type = 'text';
+            input.value = cellValue || '';
+            input.disabled = true; // Disable input initially
+            input.addEventListener('input', function() {
+              selectedRowData[key] = this.value; // Update the selectedRowData object with the new value
+            });
+            td.appendChild(input);
+          } else {
+            td.appendChild(document.createTextNode(cellValue || ""));
+          }
+          tr.appendChild(td);
+        });
+
+        table.appendChild(tr);
+      });
+    }
+    
+
+    function enableInputFields(row) {
+      // Disable input fields of all other rows and reset their values
+      var rows = document.querySelectorAll('#dataTable tr');
+      rows.forEach(function(rowItem) {
+        if (rowItem !== row) {
+          var inputs = rowItem.querySelectorAll('input[type="date"], input[type="text"]');
+          inputs.forEach(function(input) {
+            input.disabled = true;
+            input.value = ''; // Reset input value
+          });
+        }
+      });
+
+      // Enable input fields of the selected row
+      var inputs = row.querySelectorAll('input[type="date"], input[type="text"]');
+      inputs.forEach(function(input) {
+        input.disabled = false;
+      });
+    }
+
+    function updateOutwardSheet() {
+      if (selectedRowData) {
+        // Show edited data in alert box
+        alert(`
+          Unique ID: ${selectedRowData.uniqueID}
+          Dispatch Date: ${selectedRowData.dispatchDate}
+          Name Of Party: ${selectedRowData.nameOfParty}
+          ARS: ${selectedRowData.ars}
+          Grade: ${selectedRowData.grade}
+          Outward Quantity: ${selectedRowData.outwardQuantity}
+          Vehicle Number: ${selectedRowData.vehicleNumber}
+          Invoice Date: ${selectedRowData.invoiceDate}
+          Invoice Number: ${selectedRowData.invoiceNumber}
+          T/W: ${selectedRowData.tw}
+          Build Quantity: ${selectedRowData.buildQuantity}
+        `);
+
+        // Send data to server to update the "Outward" sheet version 51.0
+        fetch('https://script.google.com/macros/s/AKfycbxEiOeaYSWYGarTv9mfXpaGl-DuE-U_YQAyl8NND8pVVVhDPH0NiPiQ5NR_66ML4pTd/exec', {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(selectedRowData),
+        })
+        .then(response => response.text())
+        .then(data => {
+          alert('Data updated successfully in the "Outward" sheet!');
+          var table = document.getElementById('dataTable');
+      table.deleteRow(selectedRowData.index + 1); // Add 1 because table rows are 1-indexed
+      selectedRowData = null; // Reset selectedRowData
+        })
+        .catch(error => {
+          console.error('Error updating data:', error);
+        });
+      }
+    }
+
+    window.onload = fetchBillPendingData;
+  </script>
+</head>
+<body>
+  <h2>Edit Bill Pending Entries</h2>
+  <table id="dataTable"></table>
+  <button id="proceedButton" onclick="updateOutwardSheet()" disabled>Proceed</button>
+  <button id="advancebutton" onclick="advanceEntry()" >Enter details for Advanced Quantity</button>
+<button id="inwardbutton" onclick="inwardEntry()" >Create Inward Entry</button>
+<button id="outwardbutton" onclick="outwardEntry()" >Create Outward Entry</button>
+
+</body>
+</html>

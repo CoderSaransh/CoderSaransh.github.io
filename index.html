@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inward Entry</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #f0f4c3, #e6ee9c);
+      padding: 20px;
+    }
+    form {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #558b2f;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #33691e;
+    }
+  </style>
+</head>
+<body>
+  <h2>Home Page</h2>
+  <form id="IndexForm">
+    <button type="button" onclick="createOutwardEntry()">Create Outward Entry</button>
+    <button type="button" onclick="showSummary()">Enter details for Advanced Quantity</button>
+    <button type="button" onclick="editEntry()">Edit Bill Pending</button>
+    <button type="button" onclick="inwardEntry()">Create Inward Entry</button>
+  </form>
+  <script>
+      function createOutwardEntry() {
+      window.location.href = 'Outward1.html';
+    }
+
+    function showSummary() {
+      window.location.href = 'Advanced.html';
+    }
+      function editEntry() {
+      window.location.href = 'Edit.html';
+    }
+
+    function inwardEntry() {
+      window.location.href = 'Inward1.html';
+    }
+  </script>

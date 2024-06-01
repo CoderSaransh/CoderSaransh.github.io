@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Advanced Quantity Entry</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #f0f4c3, #e6ee9c);
+      padding: 20px;
+    }
+    form {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+    input, select, button, .radio-group {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #558b2f;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #33691e;
+    }
+    .radio-group {
+      display: flex;
+      justify-content: space-around;
+    }
+    .radio-group input {
+      width: auto;
+      margin-right: 10px;
+    }
+    .radio-group label {
+      margin: 0;
+      font-weight: normal;
+    }
+  </style>
+</head>
+<body>
+  <h2>Advanced Quantity Entry Form</h2>
+  <form id="advancedForm">
+    <label for="dispatchDate">Dispatch Date</label>
+    <input type="date" id="dispatchDate" name="dispatchDate" required>
+
+    <label for="partyName">Party Name</label>
+    <input type="text" id="partyName" name="partyName" required>
+
+    <label for="ars">ARS</label>
+    <input type="text" id="ars" name="ars" required>
+
+    <label for="grade">Grade</label>
+    <select id="grade" name="grade" required>
+      <option value="" selected>Select</option>
+      <option value="Plus">Plus</option>
+      <option value="PPC">PPC</option>
+    </select>
+
+    <label for="advancedQty">Advanced Quantity</label>
+    <input type="number" id="advancedQty" name="advancedQty" required>
+
+    <label for="vehicleNo">Vehicle No</label>
+    <input type="text" id="vehicleNo" name="vehicleNo" required>
+
+    <label for="billPending">Bill Pending</label>
+    <div class="radio-group">
+      <input type="radio" id="billPendingYes" name="billPending" value="Yes" required>
+      <label for="billPendingYes">Yes</label>
+      <input type="radio" id="billPendingNo" name="billPending" value="No" required>
+      <label for="billPendingNo">No</label>
+    </div>
+
+    <label for="shippingDetails">Shipping Details</label>
+    <select id="shippingDetails" name="shippingDetails" required>
+      <option value="" selected>Select</option>
+      <option value="Transhipment">Transhipment</option>
+      <option value="Warehouse">Warehouse</option>
+    </select>
+
+    <label for="invoiceDate">Invoice Date</label>
+    <input type="date" id="invoiceDate" name="invoiceDate" disabled>
+
+    <label for="outwardInvoiceNumber">Invoice Number</label>
+    <input type="text" id="outwardInvoiceNumber" name="outwardInvoiceNumber" disabled>
+
+    <button type="submit">Submit</button>
+    <button type="button" onclick="outwardEntry()">Create Outward Entry</button>
+    <button type="button" onclick="createInwardEntry()">Create Inward Entry</button>
+    <button type="button" onclick="editEntry()">Edit Bill Pending</button>
+  </form>
+  <script>
+    document.getElementById('advancedForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const data = {};
+      formData.forEach((value, key) => {
+        data[key] = value;
+      });
+
+      if (data['billPending'] === 'Yes') {
+        document.getElementById('invoiceDate').value = 'To be entered';
+        document.getElementById('outwardInvoiceNumber').value = 'To be entered later';
+      }
+
+      fetch('https://script.google.com/macros/s/AKfycbyYDZkVX0o7DHuY41xOW6gJ9dCWX6roRNTiuQGE5VSkTjmeRVhOm0gauGmrj0UVpP5z/exec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(data)
+      }).then(response => {
+        if (response.ok) {
+          alert('Form submitted successfully');
+          event.target.reset();
+        } else {
+          response.text().then(text => {
+            alert('Failed to submit the form: ' + text);
+          });
+        }
+      }).catch(error => {
+        console.error('Error:', error);
+        alert('Failed to submit the form');
+      });
+    });
+
+    function createInwardEntry() {
+      window.location.href = 'Inward1.html';
+    }
+
+    function editEntry() {
+      window.location.href = 'Edit.html';
+    }
+     function advanceEntry() {
+      window.location.href = 'Advanced.html';
+    }
+    function outwardEntry() {
+      window.location.href = 'Outward1.html';
+    }
+
+    document.getElementById('billPendingYes').addEventListener('change', function() {
+      if (this.checked) {
+        document.getElementById('invoiceDate').disabled = true;
+        document.getElementById('outwardInvoiceNumber').disabled = true;
+        document.getElementById('invoiceDate').value = '';
+        document.getElementById('outwardInvoiceNumber').value = '';
+      }
+    });
+
+    document.getElementById('billPendingNo').addEventListener('change', function() {
+      if (this.checked) {
+        document.getElementById('invoiceDate').disabled = false;
+        document.getElementById('outwardInvoiceNumber').disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
