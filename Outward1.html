@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Outward Entry</title>
   <style>
-  body {
+ body {
     font-family: Arial, sans-serif;
     background: linear-gradient(to right, #f0f4c3, #e6ee9c);
     padding: 20px;
   }
   form {
-    max-width: 650px; /* Adjusted width for the dialog box */
+    max-width: 600px;
     margin: auto;
     padding: 20px;
     background: white;
@@ -23,22 +23,35 @@
     margin-bottom: 8px;
     font-weight: bold;
   }
-  input, select, button {
-    width: calc(100% - 22px); /* Adjusted width for the input fields */
+  input, select, button, .radio-group {
+    width: calc(100% - 22px); /* Adjusted width */
     padding: 10px;
     margin-bottom: 15px;
     border-radius: 5px;
     border: 1px solid #ccc;
-    box-sizing: border-box; /* Ensures padding doesn't affect the width */
   }
   button {
+    
     background-color: #558b2f;
     color: white;
     border: none;
     cursor: pointer;
+    padding: 15px;
   }
   button:hover {
     background-color: #33691e;
+  }
+  .radio-group {
+    display: flex;
+    justify-content: space-around;
+  }
+  .radio-group input {
+    width: auto;
+    margin-right: 10px;
+  }
+  .radio-group label {
+    margin: 0;
+    font-weight: normal;
   }
   button:disabled {
     background-color: #ccc;
