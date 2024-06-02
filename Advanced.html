@@ -5,56 +5,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Advanced Quantity Entry</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #f0f4c3, #e6ee9c);
-      padding: 20px;
-    }
-    form {
-      max-width: 600px;
-      margin: auto;
-      padding: 20px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-    }
-    input, select, button, .radio-group {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: #558b2f;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #33691e;
-    }
-    .radio-group {
-      display: flex;
-      justify-content: space-around;
-    }
-    .radio-group input {
-      width: auto;
-      margin-right: 10px;
-    }
-    .radio-group label {
-      margin: 0;
-      font-weight: normal;
-    }
-  </style>
+  body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #f0f4c3, #e6ee9c);
+    padding: 20px;
+  }
+  form {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  input, select, button, .radio-group {
+    width: calc(100% - 22px); /* Adjusted width */
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+  button {
+    width: calc(25% - 8px);
+    background-color: #558b2f;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 15px;
+  }
+  button:hover {
+    background-color: #33691e;
+  }
+  .radio-group {
+    display: flex;
+    justify-content: space-around;
+  }
+  .radio-group input {
+    width: auto;
+    margin-right: 10px;
+  }
+  .radio-group label {
+    margin: 0;
+    font-weight: normal;
+  }
+  button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+</style>
+
 </head>
 <body>
-  <h2>Advanced Quantity Entry Form</h2>
+  <h2 align = "center">Advanced Quantity Entry Form</h2>
   <form id="advancedForm">
     <label for="dispatchDate">Dispatch Date</label>
     <input type="date" id="dispatchDate" name="dispatchDate" required>
@@ -99,7 +106,7 @@
     <label for="outwardInvoiceNumber">Invoice Number</label>
     <input type="text" id="outwardInvoiceNumber" name="outwardInvoiceNumber" disabled>
 
-    <button type="submit">Submit</button>
+    <button type="submit" id="submitButton" >Submit</button>
     <button type="button" onclick="outwardEntry()">Create Outward Entry</button>
     <button type="button" onclick="createInwardEntry()">Create Inward Entry</button>
     <button type="button" onclick="editEntry()">Edit Bill Pending</button>
@@ -107,6 +114,9 @@
   <script>
     document.getElementById('advancedForm').addEventListener('submit', function(event) {
       event.preventDefault();
+
+      const submitButton = document.getElementById('submitButton');
+      submitButton.disabled = true; // Disable the submit button
 
       const formData = new FormData(event.target);
       const data = {};
@@ -134,9 +144,11 @@
             alert('Failed to submit the form: ' + text);
           });
         }
+        submitButton.disabled = false; // Re-enable the button
       }).catch(error => {
         console.error('Error:', error);
         alert('Failed to submit the form');
+        submitButton.disabled = false; // Re-enable the button
       });
     });
 
@@ -147,9 +159,7 @@
     function editEntry() {
       window.location.href = 'Edit.html';
     }
-     function advanceEntry() {
-      window.location.href = 'Advanced.html';
-    }
+
     function outwardEntry() {
       window.location.href = 'Outward1.html';
     }

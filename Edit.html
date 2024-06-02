@@ -87,8 +87,8 @@
         radioInput.value = index; // Store the row index
         radioInput.addEventListener('change', function() {
           selectedRowData = { ...row, index }; // Store data of the selected row
-          document.getElementById('proceedButton').disabled = false;
           enableInputFields(tr);
+          checkProceedButtonState(); // Check the state of the proceed button
         });
         radioTd.appendChild(radioInput);
         tr.appendChild(radioTd);
@@ -106,6 +106,7 @@
             input.disabled = true; // Disable input initially
             input.addEventListener('input', function() {
               selectedRowData[key] = this.value; // Update the selectedRowData object with the new value
+              checkProceedButtonState(); // Check the state of the proceed button
             });
             td.appendChild(input);
           } else if (key === 'invoiceNumber') {
@@ -115,6 +116,7 @@
             input.disabled = true; // Disable input initially
             input.addEventListener('input', function() {
               selectedRowData[key] = this.value; // Update the selectedRowData object with the new value
+              checkProceedButtonState(); // Check the state of the proceed button
             });
             td.appendChild(input);
           } else {
@@ -127,7 +129,6 @@
       });
     }
     
-
     function enableInputFields(row) {
       // Disable input fields of all other rows and reset their values
       var rows = document.querySelectorAll('#dataTable tr');
@@ -146,6 +147,15 @@
       inputs.forEach(function(input) {
         input.disabled = false;
       });
+    }
+
+    function checkProceedButtonState() {
+      var proceedButton = document.getElementById('proceedButton');
+      if (selectedRowData && selectedRowData.invoiceDate && selectedRowData.invoiceNumber) {
+        proceedButton.disabled = false;
+      } else {
+        proceedButton.disabled = true;
+      }
     }
 
     function updateOutwardSheet() {
@@ -178,8 +188,9 @@
         .then(data => {
           alert('Data updated successfully in the "Outward" sheet!');
           var table = document.getElementById('dataTable');
-      table.deleteRow(selectedRowData.index + 1); // Add 1 because table rows are 1-indexed
-      selectedRowData = null; // Reset selectedRowData
+          table.deleteRow(selectedRowData.index + 1); // Add 1 because table rows are 1-indexed
+          selectedRowData = null; // Reset selectedRowData
+          document.getElementById('proceedButton').disabled = true; // Disable the proceed button again
         })
         .catch(error => {
           console.error('Error updating data:', error);
@@ -194,9 +205,8 @@
   <h2>Edit Bill Pending Entries</h2>
   <table id="dataTable"></table>
   <button id="proceedButton" onclick="updateOutwardSheet()" disabled>Proceed</button>
-  <button id="advancebutton" onclick="advanceEntry()" >Enter details for Advanced Quantity</button>
-<button id="inwardbutton" onclick="inwardEntry()" >Create Inward Entry</button>
-<button id="outwardbutton" onclick="outwardEntry()" >Create Outward Entry</button>
-
+  <button id="advancebutton" onclick="advanceEntry()">Enter details for Advanced Quantity</button>
+  <button id="inwardbutton" onclick="inwardEntry()">Create Inward Entry</button>
+  <button id="outwardbutton" onclick="outwardEntry()">Create Outward Entry</button>
 </body>
 </html>
