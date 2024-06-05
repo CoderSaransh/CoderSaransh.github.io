@@ -49,7 +49,7 @@
     }
     var data = []; // Store fetched data
     var selectedRowData = null; // Store data of the selected row
-//version 51.0
+
     function fetchBillPendingData() {
       const scriptURL = 'https://script.google.com/macros/s/AKfycbxEiOeaYSWYGarTv9mfXpaGl-DuE-U_YQAyl8NND8pVVVhDPH0NiPiQ5NR_66ML4pTd/exec';
       const callbackName = 'processData';
@@ -99,7 +99,10 @@
           var td = document.createElement('td');
           var cellValue = row[key];
           if (key === 'dispatchDate' && cellValue) {
-            td.appendChild(document.createTextNode(cellValue.substring(0, 10)));
+            // Increase the dispatch date by one day
+            var date = new Date(cellValue);
+            date.setDate(date.getDate() + 1);
+            td.appendChild(document.createTextNode(date.toISOString().substring(0, 10)));
           } else if (key === 'invoiceDate') {
             var input = document.createElement('input');
             input.type = 'date';
@@ -187,7 +190,7 @@
         })
         .then(response => response.text())
         .then(data => {
-          alert('Data updated successfully in the "Outward" sheet!');
+          alert('Data updated successfully');
           var table = document.getElementById('dataTable');
           table.deleteRow(selectedRowData.index + 1); // Add 1 because table rows are 1-indexed
           selectedRowData = null; // Reset selectedRowData
